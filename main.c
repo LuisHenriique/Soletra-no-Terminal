@@ -1,9 +1,9 @@
-/* 
+/*
 Projeto de ICC2 - Soletra no terminal
-Autores: 
-  Luis Henrique Ponciano dos Santos (Nusp:) 
+Autores:
+  Luis Henrique Ponciano dos Santos (Nusp:15577760)
   Gabriel de Araujo Lima            (Nusp: 14571376)
-  Pedro Bizon                       (Nusp: ) 
+  Pedro Bizon                       (Nusp: )
 */
 
 /* Bibliotecas e módulos */
