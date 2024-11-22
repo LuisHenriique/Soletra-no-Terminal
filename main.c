@@ -9,7 +9,7 @@ struct lista
   int tam;
   int inicio;
   int fim;
-  char valid_word[1000][TAM_LETTER];
+  char valid_word[5000][TAM_LETTER];
 };
 typedef struct lista LISTA;
 
@@ -29,7 +29,7 @@ LISTA *criar_lista()
 
 void inserir_lista(LISTA *lista, char *word)
 {
-  if (lista != NULL)
+  if (lista != NULL && lista->fim < 5000)
   {
     strcpy(lista->valid_word[lista->fim], word);
     lista->fim++;
@@ -66,7 +66,7 @@ int main()
   char comand[10];
   char valid_letters[TAM_LETTER];
   char especial_letter;
-  char word[TAM_LETTER];
+  char word[8];
 
   LISTA *lista = criar_lista();
 
@@ -90,7 +90,7 @@ int main()
   }
 
   // Processa a palavra do arquivo
-  while (fscanf(fp, "%s", word) != EOF)
+  while (fscanf(fp, "%7s", word) != EOF)
   {
     // verificar se palavra é válida, se for, insere no array.
     if (valid_word(word, valid_letters, especial_letter))
@@ -101,14 +101,17 @@ int main()
 
   fclose(fp);
 
+  imprimir_lista(lista);
+  printf("Teste");
   while (1)
   {
+
     scanf(" %s", comand);
 
     // comando para receber uma palavra válida
     if (strcmp(comand, "palavra") == 0)
     {
-      char *palavra = (char *)malloc(sizeof(char));
+      char *palavra = (char *)malloc(sizeof(char) * 7);
       if (palavra != NULL)
         scanf(" %s", palavra);
     }
@@ -118,7 +121,8 @@ int main()
     // Comando para finalizar a tarefa
     if (strcmp(comand, "solucao") == 0)
     {
-      printf("fim");
+      printf("fim\n");
+      imprimir_lista(lista);
       break;
     }
   }
@@ -149,11 +153,17 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
 
 int verify_letter(char letter, char *letters_ok)
 {
+  int signal = 0;
   for (int i = 0; i < TAM_LETTER; i++)
   {
     if (letter != letters_ok[i])
-      return 1;
+      signal = 1;
+    else
+      signal = 0;
   }
+
+  if (signal)
+    return 1;
 
   return 0;
 }
