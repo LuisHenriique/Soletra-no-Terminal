@@ -27,6 +27,7 @@ LISTA *criar_lista();
 void inserir_lista(LISTA *lista, char *word);
 void imprimir_lista(LISTA *lista);
 void lista_detruir(LISTA **lista);
+void lista_busca(LISTA *lista);
 
 LISTA *criar_lista()
 {
@@ -58,7 +59,7 @@ void imprimir_lista(LISTA *lista)
   {
     for (int j = 0; j < lista->fim; j++)
     {
-      printf("%s", lista->valid_word[j]);
+      printf(" %s ", lista->valid_word[j]);
     }
   }
 }
@@ -68,6 +69,22 @@ void lista_detruir(LISTA **lista)
   {
     for (int i = 0; i < (*lista)->fim; i++)
     {
+    }
+  }
+}
+
+void lista_busca(LISTA *lista)
+{
+  if (lista != NULL)
+  {
+    int middle, i, inf, sup;
+    inf = lista->inicio;
+    sup = lista->fim;
+
+    for (i = 0; i < lista->fim; i++)
+    {
+      middle = (inf + sup) / 2;
+      // if(lista->valid_word[])
     }
   }
 }
@@ -104,16 +121,13 @@ int main()
     printf("Erro abrir o arquivo");
     exit(1);
   }
-
   // Processa a palavra do arquivo
   while (fscanf(fp, "%s", word) != EOF)
   {
     // verificar se palavra é válida, se for, insere no array.
 
-    printf("OPq");
     if (valid_word(word, valid_letters, especial_letter))
     {
-      printf("Caiu aqui");
       inserir_lista(lista, word);
     }
   }
@@ -130,9 +144,8 @@ int main()
     // comando para receber uma palavra válida
     if (strcmp(comand, "palavra") == 0)
     {
-      char *palavra = (char *)malloc(sizeof(char) * 7);
-      if (palavra != NULL)
-        scanf(" %s", palavra);
+      char word_test[50];
+      scanf(" %s", word_test);
     }
     if (strcmp(comand, "progresso") == 0)
     {
@@ -166,7 +179,6 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
   int especial = 0;
   int word_size = strlen(word);
 
-  int verify = 1;
   if ((word_size < 4) || (word_size > 7))
     return 0;
 
