@@ -73,7 +73,7 @@ void lista_detruir(LISTA **lista)
 }
 /* Protótipos de funções das palavras */
 int verify_letter(char, char *);
-int valid_word(char *, char *, char);
+int valid_word(char *, char *);
 
 /* A função principal coordena os comandos */
 int main()
@@ -81,7 +81,6 @@ int main()
 
   char comand[10];
   char valid_letters[TAM_LETTER];
-  char especial_letter;
   char word[50];
 
   LISTA *lista = criar_lista();
@@ -94,7 +93,6 @@ int main()
   {
     scanf(" %c", &valid_letters[i]);
   }
-  especial_letter = valid_letters[0];
 
   //  Verificando o arquivo
   FILE *fp;
@@ -110,7 +108,8 @@ int main()
   {
     // verificar se palavra é válida, se for, insere no array.
 
-    if (valid_word(word, valid_letters, especial_letter))
+    printf("OPq");
+    if (valid_word(word, valid_letters))
     {
       printf("Caiu aqui");
       inserir_lista(lista, word);
@@ -150,21 +149,24 @@ int main()
 }
 
 // Função que verifica se a palavra lida é válida
-int valid_word(char *word, char *valid_letters, char especial_letter)
+int valid_word(char *word, char *valid_letters)
 {
   int i;
-  int verify = 0;
+  int verify = 1;
   if ((strlen(word) < 4) || (strlen(word) > 7))
     return 0;
 
   for (i = 0; i < TAM_LETTER; i++)
   {
     char letter = word[i];
-    if (!verify_letter(letter, valid_letters)) // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
-      return 0;
+    if (!verify_letter(letter, valid_letters))
+    { // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
+      verify = 0;
+      break;
+    }
   }
 
-  return 1; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
+  return verify; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
 }
 
 int verify_letter(char letter, char *letters_ok)
@@ -174,11 +176,12 @@ int verify_letter(char letter, char *letters_ok)
   {
     if (letter == letters_ok[i])
       signal = 1;
-    else{
-      break;
+    else
+    {
       signal = 0;
+      break;
     }
   }
 
-  return (signal) ? 1 : 0;
+  return (signal);
 }
