@@ -1,7 +1,7 @@
 /*
 Projeto de ICC2 - Soletra no terminal
 Autores:
-  Luis Henrique Ponciano dos Santos (Nusp:15577760)
+  Luis Henrique Ponciano dos Santos (Nusp: 15577760)
   Gabriel de Araujo Lima            (Nusp: 14571376)
   Pedro Bizon                       (Nusp: )
 */
@@ -21,6 +21,12 @@ struct lista
   char valid_word[5000][TAM_LETTER];
 };
 typedef struct lista LISTA;
+
+/* Protótipos das funções da lista */
+LISTA *criar_lista();
+void inserir_lista(LISTA *lista, char *word);
+void imprimir_lista(LISTA *lista);
+void lista_detruir(LISTA **lista);
 
 LISTA *criar_lista()
 {
@@ -65,10 +71,11 @@ void lista_detruir(LISTA **lista)
     }
   }
 }
-/* Protótipos de funções */
+/* Protótipos de funções das palavras */
 int verify_letter(char, char *);
 int valid_word(char *, char *, char);
 
+/* A função principal coordena os comandos */
 int main()
 {
 
@@ -167,8 +174,10 @@ int verify_letter(char letter, char *letters_ok)
   {
     if (letter != letters_ok[i])
       signal = 1;
-    else
+    else{
+      break;
       signal = 0;
+    }
   }
 
   if (signal)
