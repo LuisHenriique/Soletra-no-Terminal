@@ -150,13 +150,24 @@ int main()
   return 0;
 }
 
-// Função que verifica se a palavra lida é válida
+/* Função que verifica se a palavra lida é válida */
 int valid_word(char *word, char *valid_letters, char especial_letter)
 {
+  /*
+  A função valid_word é usada para saber se uma palavra pode ou não entrar na lista
+  de palavras válidas do jogo, ou seja, aquelas que contêm somente as letras especificadas, além da especial
+
+  Parâmetros:
+    word: palavra a ser analisada
+    valid_letters: string que contém as letras válidas
+    especial_letter: letra especial que deve aparecer na palavra
+  */
   size_t i;
   int especial = 0;
+  int word_size = strlen(word);
+
   int verify = 1;
-  if ((strlen(word) < 4) || (strlen(word) > 7))
+  if ((word_size < 4) || (word_size > 7))
     return 0;
 
   for (i = 0; i < strlen(word); i++)
