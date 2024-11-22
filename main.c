@@ -154,6 +154,7 @@ int main()
 int valid_word(char *word, char *valid_letters, char especial_letter)
 {
   size_t i;
+  int especial = 0;
   int verify = 1;
   if ((strlen(word) < 4) || (strlen(word) > 7))
     return 0;
@@ -161,11 +162,14 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
   for (i = 0; i < strlen(word); i++)
   {
     char letter = word[i];
-    if (!verify_letter(letter, valid_letters))
+    if (verify_letter(letter, valid_letters))
     { // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
-      verify = 0;
-      break;
+      verify = 1;
+      if (letter == especial_letter)
+        especial = 1;
     }
+
+    return (verify && especial) ? 1 : 0;
   }
 
   return verify; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
