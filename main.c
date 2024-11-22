@@ -58,7 +58,7 @@ void imprimir_lista(LISTA *lista)
   {
     for (int j = 0; j < lista->fim; j++)
     {
-      printf("%s", lista->valid_word[j]);
+      printf(" {%s} ", lista->valid_word[j]);
     }
   }
 }
@@ -94,10 +94,11 @@ int main()
   {
     scanf(" %c", &valid_letters[i]);
   }
+  valid_letters[7] = '\0'; // Adiciona terminador nulo
+
   especial_letter = valid_letters[0];
   //  Verificando o arquivo
-  FILE *
-      fp;
+  FILE *fp;
   fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
   if (fp == NULL)
   {
@@ -110,17 +111,13 @@ int main()
   {
     // verificar se palavra é válida, se for, insere no array.
 
-    printf("OPq");
     if (valid_word(word, valid_letters, especial_letter))
     {
-      printf("Caiu aqui");
       inserir_lista(lista, word);
     }
   }
 
   fclose(fp);
-
-  imprimir_lista(lista);
 
   while (1)
   {
@@ -155,7 +152,6 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
 {
   size_t i;
   int especial = 0;
-  int verify = 1;
   if ((strlen(word) < 4) || (strlen(word) > 7))
     return 0;
 
