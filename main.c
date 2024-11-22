@@ -1,9 +1,18 @@
+/* 
+Projeto de ICC2 - Soletra no terminal
+Autores: 
+  Luis Henrique Ponciano dos Santos (Nusp:) 
+  Gabriel de Araujo Lima            (Nusp: 14571376)
+  Pedro Bizon                       (Nusp: ) 
+*/
+
+/* Bibliotecas e módulos */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define TAM_LETTER 7
 
-/*Estrutura lista sequencial*/
+/* Definição da estrutura lista sequencial */
 struct lista
 {
   int tam;
@@ -56,7 +65,7 @@ void lista_detruir(LISTA **lista)
     }
   }
 }
-/*Protótipos de funções*/
+/* Protótipos de funções */
 int verify_letter(char, char *);
 int valid_word(char *, char *, char);
 
