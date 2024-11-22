@@ -91,23 +91,20 @@ void lista_busca(LISTA *lista)
 /* Protótipos de funções das palavras */
 int verify_letter(char, char *);
 int valid_word(char *, char *, char);
+void inicio(char *valid_letters, LISTA *lsita);
 
 /* A função principal coordena os comandos */
 int main()
 {
+  // Declaração das variáveis auxiliares
+  char comand[10];                // Representa o comando do usuário (Ex.: 'inicio', 'palavra' ...)
+  char valid_letters[TAM_LETTER]; // Conjunto das letras válidas que o usuário fornece
 
-  char comand[10];
-  char valid_letters[TAM_LETTER];
-  char word[50];
-  char especial_letter;
+  LISTA *lista = criar_lista(); // Inicia a lista para armazenar as palavras válidas com base nas letras do usuário
 
-  LISTA *lista = criar_lista();
+  scanf(" %s", comand);
 
-  // Iniciando o jogo, com o comando inicio.
-  char inicio[6];
-  scanf(" %s", inicio);
-  // Leitura das letras válidas e sendo letra especial a primeira a ser lida
-  for (int i = 0; i < TAM_LETTER; i++)
+  for (int i = 0; i < TAM_LETTER; i++) // Leitura das letras válidas e sendo letra especial a primeira a ser lida
   {
     scanf(" %c", &valid_letters[i]);
   }
@@ -121,13 +118,16 @@ int main()
     printf("Erro abrir o arquivo");
     exit(1);
   }
+
   // Processa a palavra do arquivo
   while (fscanf(fp, "%s", word) != EOF)
   {
     // verificar se palavra é válida, se for, insere no array.
 
+    printf("OPq");
     if (valid_word(word, valid_letters, especial_letter))
     {
+      printf("Caiu aqui");
       inserir_lista(lista, word);
     }
   }
@@ -140,6 +140,12 @@ int main()
   {
 
     scanf(" %s", comand);
+
+    if (strcmp(comand, "inicio") == 0)
+    {                               // Se for o comando "inicio", chama a função inicio
+      inicio(valid_letters, lista); // A função inicio recebe como entrada uma string de 7 letras
+      imprimir_lista(lista);
+    }
 
     // comando para receber uma palavra válida
     if (strcmp(comand, "palavra") == 0)
@@ -161,6 +167,31 @@ int main()
 
   // lista_destruir();
   return 0;
+}
+
+void inicio(char *valid_letters, LISTA *lista)
+{
+  char word[50];
+  char especial_letter = valid_letters[0];
+
+  FILE *fp;
+  fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
+  if (fp == NULL)
+  {
+    printf("Erro abrir o arquivo");
+    exit(1);
+  }
+
+  // Processa a palavra do arquivo
+  while (fscanf(fp, "%s", word) != EOF)
+  {
+    // verificar se palavra é válida, se for, insere no array.
+    if (valid_word(word, valid_letters, especial_letter))
+    {
+      inserir_lista(lista, word);
+    }
+  }
+  fclose(fp);
 }
 
 /* Função que verifica se a palavra lida é válida */
