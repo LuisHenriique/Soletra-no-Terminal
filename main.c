@@ -151,12 +151,12 @@ int main()
 // Função que verifica se a palavra lida é válida
 int valid_word(char *word, char *valid_letters)
 {
-  int i;
+  size_t i;
   int verify = 1;
   if ((strlen(word) < 4) || (strlen(word) > 7))
     return 0;
 
-  for (i = 0; i < TAM_LETTER; i++)
+  for (i = 0; i < strlen(word); i++)
   {
     char letter = word[i];
     if (!verify_letter(letter, valid_letters))
