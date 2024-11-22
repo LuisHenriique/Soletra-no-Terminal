@@ -71,6 +71,35 @@ void lista_detruir(LISTA **lista)
     }
   }
 }
+
+int lista_busca(LISTA *lista, char *chave)
+{
+  if (lista != NULL)
+  {
+    int sup, inf, middle;
+
+    inf = lista->inicio;
+    sup = lista->fim - 1;
+
+    while (inf <= sup)
+    {
+      middle = (inf + sup) / 2;
+      if (strcmp(lista->valid_word[middle], chave) == 0)
+      {
+        return 1;
+      }
+      else if (strcmp(lista->valid_word[middle], chave) > 0)
+      {
+        middle = sup - 1;
+      }
+      else
+      {
+        middle = inf + 1;
+      }
+    }
+    return 0;
+  }
+}
 /* Protótipos de funções das palavras */
 int verify_letter(char, char *);
 int valid_word(char *, char *, char);
@@ -102,9 +131,15 @@ int main()
     // comando para receber uma palavra válida
     if (strcmp(comand, "palavra") == 0)
     {
-      char *palavra = (char *)malloc(sizeof(char) * 7);
-      if (palavra != NULL)
-        scanf(" %s", palavra);
+      char words[50];
+      scanf(" %s", words);
+      if (lista_busca(lista, words))
+      {
+
+        printf("sucesso + 1");
+      }
+      else
+        printf("palavra invalida");
     }
     if (strcmp(comand, "progresso") == 0)
     {
