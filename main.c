@@ -73,7 +73,7 @@ void lista_detruir(LISTA **lista)
 }
 /* Protótipos de funções das palavras */
 int verify_letter(char, char *);
-int valid_word(char *, char *);
+int valid_word(char *, char *, char);
 
 /* A função principal coordena os comandos */
 int main()
@@ -82,6 +82,7 @@ int main()
   char comand[10];
   char valid_letters[TAM_LETTER];
   char word[50];
+  char especial_letter;
 
   LISTA *lista = criar_lista();
 
@@ -93,9 +94,10 @@ int main()
   {
     scanf(" %c", &valid_letters[i]);
   }
-
+  especial_letter = valid_letters[0];
   //  Verificando o arquivo
-  FILE *fp;
+  FILE *
+      fp;
   fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
   if (fp == NULL)
   {
@@ -109,7 +111,7 @@ int main()
     // verificar se palavra é válida, se for, insere no array.
 
     printf("OPq");
-    if (valid_word(word, valid_letters))
+    if (valid_word(word, valid_letters, especial_letter))
     {
       printf("Caiu aqui");
       inserir_lista(lista, word);
@@ -149,7 +151,7 @@ int main()
 }
 
 // Função que verifica se a palavra lida é válida
-int valid_word(char *word, char *valid_letters)
+int valid_word(char *word, char *valid_letters, char especial_letter)
 {
   size_t i;
   int verify = 1;
