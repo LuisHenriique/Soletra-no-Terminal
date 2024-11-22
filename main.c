@@ -75,7 +75,7 @@ int main()
   char comand[10];
   char valid_letters[TAM_LETTER];
   char especial_letter;
-  char word[8];
+  char word[50];
 
   LISTA *lista = criar_lista();
 
@@ -99,11 +99,13 @@ int main()
   }
 
   // Processa a palavra do arquivo
-  while (fscanf(fp, "%7s", word) != EOF)
+  while (fscanf(fp, "%s", word) != EOF)
   {
     // verificar se palavra é válida, se for, insere no array.
+
     if (valid_word(word, valid_letters, especial_letter))
     {
+      printf("Caiu aqui");
       inserir_lista(lista, word);
     }
   }
@@ -111,7 +113,7 @@ int main()
   fclose(fp);
 
   imprimir_lista(lista);
-  printf("Teste");
+
   while (1)
   {
 
@@ -143,21 +145,19 @@ int main()
 // Função que verifica se a palavra lida é válida
 int valid_word(char *word, char *valid_letters, char especial_letter)
 {
-  int i, have_especial_letter = 0;
+  int i;
+  int verify = 0;
   if ((strlen(word) < 4) || (strlen(word) > 7))
     return 0;
 
   for (i = 0; i < TAM_LETTER; i++)
   {
     char letter = word[i];
-    if (verify_letter(letter, valid_letters)) // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
+    if (!verify_letter(letter, valid_letters)) // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
       return 0;
-
-    if (letter == especial_letter)
-      have_especial_letter = 1;
   }
 
-  return have_especial_letter; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
+  return 1; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
 }
 
 int verify_letter(char letter, char *letters_ok)
@@ -165,14 +165,11 @@ int verify_letter(char letter, char *letters_ok)
   int signal = 0;
   for (int i = 0; i < TAM_LETTER; i++)
   {
-    if (letter != letters_ok[i])
+    if (letter == letters_ok[i])
       signal = 1;
     else
       signal = 0;
   }
 
-  if (signal)
-    return 1;
-
-  return 0;
+  return (signal) ? 1 : 0;
 }
