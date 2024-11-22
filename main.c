@@ -164,10 +164,12 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
   */
   int i;
   int verify = 0;
-  if ((strlen(word) < 4) || (strlen(word) > 7))
+  int word_size = strlen(word);
+
+  if ((word_size < 4) || word_size > 7))
     return 0;
 
-  for (i = 0; i < strlen(word); i++)
+  for (i = 0; i < word_size; i++)
   {
     char letter = word[i];
     if (verify_letter(letter, valid_letters))
@@ -176,8 +178,6 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
       if (letter == especial_letter)
         especial = 1;
     }
-
-    return (verify && especial) ? 1 : 0;
   }
 
   return verify; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
