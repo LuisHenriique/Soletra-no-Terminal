@@ -162,32 +162,22 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
   for (i = 0; i < strlen(word); i++)
   {
     char letter = word[i];
-    if (verify_letter(letter, valid_letters))
-    { // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
-      verify = 1;
-      if (letter == especial_letter)
-        especial = 1;
-    }
+    if (!verify_letter(letter, valid_letters))
+      return 0;
 
-    return (verify && especial) ? 1 : 0;
+    if (letter == especial_letter)
+      especial = 1;
   }
-
-  return verify; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
+  return especial;
 }
 
 int verify_letter(char letter, char *letters_ok)
 {
-  int signal = 0;
+
   for (int i = 0; i < TAM_LETTER; i++)
   {
     if (letter == letters_ok[i])
-      signal = 1;
-    else
-    {
-      signal = 0;
-      break;
-    }
+      return 1;
   }
-
-  return (signal);
+  return 0;
 }
