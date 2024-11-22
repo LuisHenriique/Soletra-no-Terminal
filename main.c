@@ -81,8 +81,8 @@ int main()
 
   char comand[10];
   char valid_letters[TAM_LETTER];
-  char especial_letter;
   char word[50];
+  char especial_letter;
 
   LISTA *lista = criar_lista();
 
@@ -95,9 +95,9 @@ int main()
     scanf(" %c", &valid_letters[i]);
   }
   especial_letter = valid_letters[0];
-
   //  Verificando o arquivo
-  FILE *fp;
+  FILE *
+      fp;
   fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
   if (fp == NULL)
   {
@@ -110,6 +110,7 @@ int main()
   {
     // verificar se palavra é válida, se for, insere no array.
 
+    printf("OPq");
     if (valid_word(word, valid_letters, especial_letter))
     {
       printf("Caiu aqui");
@@ -166,14 +167,20 @@ int valid_word(char *word, char *valid_letters, char especial_letter)
   if ((strlen(word) < 4) || (strlen(word) > 7))
     return 0;
 
-  for (i = 0; i < TAM_LETTER; i++)
+  for (i = 0; i < strlen(word); i++)
   {
     char letter = word[i];
-    if (!verify_letter(letter, valid_letters)) // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
-      return 0;
+    if (verify_letter(letter, valid_letters))
+    { // se verify retornar 1, significa que a letra não está presente entre as letras válidas do problema
+      verify = 1;
+      if (letter == especial_letter)
+        especial = 1;
+    }
+
+    return (verify && especial) ? 1 : 0;
   }
 
-  return 1; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
+  return verify; // vai retornar 1, apenas se houver a letra válida, e a palavra não atender os if's acimas.
 }
 
 int verify_letter(char letter, char *letters_ok)
