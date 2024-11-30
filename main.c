@@ -3,7 +3,7 @@ Projeto de ICC2 - Soletra no terminal
 Autores:
   Luis Henrique Ponciano dos Santos (Nusp: 15577760)
   Gabriel de Araujo Lima            (Nusp: 14571376)
-  Pedro Bizon                       (Nusp: )
+  Pedro Bizon                       (Nusp: 11812667)
 */
 
 /* Bibliotecas e módulos */
@@ -124,7 +124,7 @@ int main()
         break; // Encerra a função, pois todas as palavras foram encontradas
       }
     }
-    if (strcmp(comand, "progresso") == 0)
+    if (strcmp(comand, "progresso") == 0) // Caso o comando seja progresso
     {
       printf("progresso atual:\n");
       print_vector(lista);
@@ -174,6 +174,7 @@ void inserir_lista(LISTA *lista, char *word)
   }
 }
 
+/* Funcao para imprimir a lista */
 void imprimir_lista(LISTA *lista)
 {
   if (lista != NULL)
@@ -204,6 +205,7 @@ void imprimir_lista(LISTA *lista)
   }
 }
 
+/* Funcao para apagar a lista*/
 void lista_detruir(LISTA **lista)
 {
   if ((*lista) != NULL)
@@ -214,6 +216,8 @@ void lista_detruir(LISTA **lista)
   }
 }
 
+/* Implementação da busca na lista */
+/* Foi utilizado busca binária */
 int lista_busca(LISTA *lista, char *chave, int *indice)
 {
   if (lista != NULL)
@@ -244,6 +248,16 @@ int lista_busca(LISTA *lista, char *chave, int *indice)
 /* Implementação das funções dos comandos e funções auxiliares */
 void inicio_(char *valid_letters, LISTA *lista)
 {
+  /*
+  A função inicio inicializa a lista principal, atualizando as informações
+  Ela abre o arquivo e verifica as palavras validas, se for valida insere
+
+  Parâmetros:
+    valid_letters: vetor com as letras validas
+    lista: lista onde sera armazenado as palavras validas
+  Return: void
+  */
+
   /* Declaração de variáveis auxiliares */
   char especial_letter = valid_letters[0]; // Variavel que armazena a letra que precisa ter, que está na posição 0 de valid_letters
   char word[50];                           // Armazena a palavra lida
@@ -251,7 +265,7 @@ void inicio_(char *valid_letters, LISTA *lista)
 
   /* Abre o arquivo */
   FILE *fp;
-  fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
+  fp = fopen("valid_words.txt", "r");
   if (fp == NULL) // Verificação se o arquivo foi aberto
   {
     printf("Erro ao abrir o arquivo");
@@ -291,52 +305,171 @@ void inicio_(char *valid_letters, LISTA *lista)
   fclose(fp); // Fecha o arquivo
 }
 
-// Função que verifica se a palavra lida é válida
+/* A funcao a seguir representa o comando "palavra" do usuario */
+void palavra(LISTA *lista, char *words)
+{
+  /*
+  A funcao palavra recebe a lista e uma palavra que o usuario digitou
+  Depois, analisa se a palavra recebida é valida, se for atualiza as informações
+  das palavras encontradas
+
+  Parâmetros:
+    words: palavra recebida para ser analisada
+    lista: lista onde sera armazenado as palavras validas
+
+  Return: void
+  */
+
+  /* Declaração de variaveis auxiliares*/
+  int indice; // Indice representa o indice da palavra na lista original
+
+  if (lista_busca(lista, words, &indice)) // Busca a palavra na lista de palavras validas
+  {                                       // lista_busca retorna 1 se encontrou e 0 se nao encontrou
+    int existe = 0;                       // Flag auxiliar para analisar se a palavra ja foi escrita pelo usuario
+
+    if (lista->vetor_auxiliar[indice].encontrado == 1) // Verifica no vetor auxiliar se a palavra ja foi encontrada
+    {                                                  // Vetor auxiliar é um vetor que contem informações de cada palavra
+      existe = 1;                                      // Se verificar que a palavra ja foi encontrada, então marca a flag com 1
+    }
+    /* Caso em que não existe, ou seja, ainda não foi encontrada */
+    if (!existe)                                                 // Como não existe, então realiza a atualização das variaveis que
+    {                                                            // armazenam informações das palavras encontradas
+      lista->vetor_auxiliar[indice].encontrado = 1;              // Marca a palavra como encontrada
+      lista->qtd_palavras_encontradas++;                         // Atualiza a quantidade de palavras encontradas
+      lista->qtd_palavras_por_tamanho[0][(strlen(words) - 4)]++; // Atualiza a matriz para informar que a quantidade de palavras
+      printf("sucesso + 1\n");                                   // encontradas de tamanho strlen(word) foi aumentada em 1 unidade
+    }
+    else // Caso ja tenha sido encontrada imprime a informação
+    {
+      printf("palavra ja encontrada\n");
+    }
+  }
+  else // Caso a palavra nao esteja na lista de palavras validas
+  {
+    printf("palavra invalida\n");
+  }
+}
+
+/* Função para verificar se a palavra é valida (retorna 1 - valida, retorna 0 - nao valida) */
 int verifica_palavra(char *word, char *valid_letters, char especial_letter)
 {
-  size_t i;
-  int especial = 0;
-  int word_size = strlen(word);
-  if (word_size < 4 || word_size > TAM_LETTER)
-    return 0;
+  /*
+  A função verifica se a palavra é valida, ou seja, se ela atende a todos os criterios
+  de possuir as letras validas e tambem conter a letra especial
 
+  Parâmetros:
+    word: palavra a ser analisada
+    valid_letters: vetor contendo as letras validas
+    especial_letter: letra especial, que deve estar na palavra
+
+  Return:
+    1 se a palavra for valida
+    0 se a palavra nao for valida
+  */
+
+  /* Declaração de variáveis auxiliares */
+  size_t i;                     // Variável para percorrer
+  int especial = 0;             // Variável para armazenar se a letra especial foi encontrada
+  int word_size = strlen(word); // Variável para guardar o tamanho da palavra
+
+  /* Comparação inicial do tamanho da palavra */
+  if (word_size < 4 || word_size > TAM_LETTER - 1) // Caso tenha tamanho menor que quatro ou maior que
+    return 0;                                      // 8, então a palavra é invalida
+
+  /*
+  Loop para verificar se cada letra da palavra é valida, ou seja, se a letra se encontra
+  entre as letras fornecidas pelo usuario
+  */
   for (i = 0; i < strlen(word); i++)
   {
-    char letter = word[i];
-    if (!verify_letter(letter, valid_letters))
-      return 0;
+    char letter = word[i];                     // Variavel para armazenar a letra atual
+    if (!verify_letter(letter, valid_letters)) // Verifica se a letra é valida com a função verify_letter (1 - valida, 0 - invalida)
+      return 0;                                // Se nao e valida, retorna 0, pois a palavra é invalida
 
-    if (letter == especial_letter)
+    if (letter == especial_letter) // Analise da letra especial, pois ela deve estar presente
       especial = 1;
   }
-  return especial;
+  return especial; // Passado todos os casos das letras, retornar especial equivale a retornar se a palavra é valida ou invalida
 }
 
+/* Funcao para verificar se a letra é valida */
 int verify_letter(char letter, char *letters_ok)
 {
+  /*
+  A função recebe uma letra e verifica se ela se encontra entre as letras validas
 
+  Parâmetros:
+    letter: letra a ser analisada
+    letters_ok: vetor com as letras validas
+
+  Return:
+    1 se for letra valida
+    0 se for letra invalida
+  */
+
+  /* Loop para verificar se a letra esta entre as letras fornecidas pelo usuario */
   for (int i = 0; i < TAM_LETTER; i++)
   {
-    if (letter == letters_ok[i])
+    if (letter == letters_ok[i]) // Caso esteja entre elas, retorna 1 - letra valida
       return 1;
   }
-  return 0;
+  return 0; // Caso passe todos os casos e não tenha achado a letra, é invalida
 }
 
+/* Funcao para imprimir a quantidade de letras que o usuario ja encontrou e as restantes por quantidade de letras */
 void print_vector(LISTA *lista)
 {
+  /*
+  A funcao imprime as informacoes a respeito das palavras ja encontradas
+  e das restantes
+
+  Parâmetros:
+    lista: lista onde sera armazenado as palavras validas
+
+  Return: void
+  */
+
+  /* Verifica se a lista esta vazia */
   if (lista != NULL)
   {
-
+    /* Loop para percorrer por quantidade de letras */
+    /*
+    Caso i=0, estamos analisando o caso 4 letras
+    Caso i=1, estamos analisando o caso 5 letras
+    E assim por diante, estamos analisando a quantidade i+4 letras
+    */
     for (int i = 0; i < 5; i++)
     {
+      /*
+      Variavel auxiliar que armazena a quantidade de palavras restantes
+      Como temos a quantidade de já encontradas e a quantidade de total por tamanho
+      Então fazemos a diferença entre quantidade total e quantidade de já encontradas
+      Assim: quantidade de palavras restantes = qtd total - qtd encontradas
+
+      Essa variavel foi usada para deixar o codigo mais limpo
+      */
       int qtd_palavras_restantes = lista->qtd_palavras_por_tamanho[1][i] - lista->qtd_palavras_por_tamanho[0][i];
 
+      /* Imprimir a quantidade de palavras encontradas e as restantes por tamanho da palavra */
+      /*
+      Observação: essa informação encontra-se armazenada na matriz do vetor_auxiliar
+      Essa matriz possibilita um acesso direto e eficiente a informação das palavras
+      Lembrando que a linha 0 dessa matriz representa a quantidade de palavras encontradas
+      E a linha 1 a quantidade de palavras total
+      Já as colunas representam a quantidade de letras
+      coluna 0: palavras de 4 letras
+      coluna 1: palavras de 5 letras
+      ...
+      coluna i: palavras de i+4 letras
+      */
       printf("(%d letras) %d palavra(s) encontrada(s) / %d palavra(s) faltando\n", i + 4, lista->qtd_palavras_por_tamanho[0][i], qtd_palavras_restantes);
     }
   }
 }
 
+/* Funções para ordenar */
+
+/* Funcao auxiliar do quicksort */
 int particiona(LISTA *lista, int inicio, int fim)
 {
   PALAVRA pivo = lista->vetor_auxiliar[fim]; // Pivô
@@ -364,6 +497,7 @@ int particiona(LISTA *lista, int inicio, int fim)
   return i + 1;
 }
 
+/* Funcao principal do quicksort*/
 void quick_sort(LISTA *lista, int inicio, int fim)
 {
   if (inicio < fim)
@@ -371,37 +505,5 @@ void quick_sort(LISTA *lista, int inicio, int fim)
     int pos = particiona(lista, inicio, fim);
     quick_sort(lista, inicio, pos - 1);
     quick_sort(lista, pos + 1, fim);
-  }
-}
-
-void palavra(LISTA *lista, char *words)
-{
-  int indice;
-
-  if (lista_busca(lista, words, &indice))
-  {
-    int existe = 0;
-
-    if (lista->vetor_auxiliar[indice].encontrado == 1)
-    {
-      existe = 1;
-    }
-
-    if (!existe)
-    {
-      lista->vetor_auxiliar[indice].encontrado = 1;
-      lista->qtd_palavras_encontradas++;
-      lista->qtd_palavras_por_tamanho[0][(strlen(words) - 4)]++;
-
-      printf("sucesso + 1\n");
-    }
-    else
-    {
-      printf("palavra ja encontrada\n");
-    }
-  }
-  else
-  {
-    printf("palavra invalida\n");
   }
 }
