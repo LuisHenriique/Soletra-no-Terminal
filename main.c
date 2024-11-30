@@ -10,13 +10,14 @@ Autores:
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define TAM_LETTER 8
+#define TAM_LETTER 9
 
 /* Definição da estrutura lista sequencial */
 struct palavra
 {
-  int indice;
+  int indice; // Indice da palavra na lista original
   int tam;
+  int encontrado; // 1 se foi encontrada e 0 se não
 };
 typedef struct palavra PALAVRA;
 
@@ -27,6 +28,7 @@ struct lista
   int inicio;
   int fim;
   PALAVRA palavras_encontradas[1000]; // Vetor auxiliar que armazena as palavras já encontradas
+  PALAVRA vetor_auxiliar[1000];       // Vetor auxiliar que em cada elemento representa uma palavra, armazenando se ela ja foi encontrada e seu tamanho
   int qtd_palavras_encontradas;       // Quantidade de palavras encontradas
   int qtd_palavras_por_tamanho[2][5]; // Indice 0 armazena a quantidade total de palavras de 4 letras
                                       // Indice 1 armazena a quantidade total de palavras de 5 letras, e assim por diante, até 8 letras
@@ -38,6 +40,13 @@ LISTA *criar_lista();
 void inserir_lista(LISTA *, char *);
 void imprimir_lista(LISTA *);
 void lista_detruir(LISTA **);
+/* Protótipos de funções das palavras */
+int verify_letter(char, char *);
+int verifica_palavra(char *, char *, char);
+void inicio_(char *, LISTA *);
+void print_vector(LISTA *);
+int particiona(LISTA *, int, int);
+void quick_sort(LISTA *, int, int);
 
 LISTA *criar_lista()
 {
@@ -75,10 +84,25 @@ void imprimir_lista(LISTA *lista)
 {
   if (lista != NULL)
   {
-    for (int j = 0; j < lista->fim; j++)
+    // Percorre as palavras de 4 a 7 letras
+    for (int tamanho = 0; tamanho < 5; tamanho++) // 4 letras até 7 letras
     {
-      printf("%s, ", lista->lista_palavras[j]);
+      int tamanho_palavra = tamanho + 4; // Calcula o tamanho das palavras (4, 5, 6, 7)
+      printf("(%d letras) ", tamanho_palavra);
+
+      // Verifica cada palavra no vetor auxiliar se ela corresponde ao tamanho
+      for (int j = 0; j < lista->tam; j++)
+      {
+        // Verifica se a palavra tem o tamanho correto e se não foi encontrada
+        if (lista->vetor_auxiliar[j].tam == tamanho_palavra && lista->vetor_auxiliar[j].encontrado == 0)
+        {
+          // Se a palavra não foi encontrada, imprime ela
+          printf("%s, ", lista->lista_palavras[lista->vetor_auxiliar[j].indice]);
+        }
+      }
+      printf("\n");
     }
+    printf("fim!");
   }
 }
 void lista_detruir(LISTA **lista)
@@ -117,13 +141,6 @@ int lista_busca(LISTA *lista, char *chave, int *indice)
     return 0;
   }
 }
-/* Protótipos de funções das palavras */
-int verify_letter(char, char *);
-int verifica_palavra(char *, char *, char);
-void inicio_(char *, LISTA *);
-void print_vector(LISTA *);
-int particiona(LISTA *, int, int);
-void quick_sort(LISTA *, int, int);
 
 /* A função principal coordena os comandos */
 int main()
@@ -158,35 +175,35 @@ int main()
       {
         int existe = 0;
 
-        for (int i = 0; i < lista->tam; i++)
+        if (lista->vetor_auxiliar[indice].encontrado == 1)
         {
-          if (lista->palavras_encontradas[i].indice == indice)
-          {
-            existe = 1;
-            break;
-          }
+          existe = 1;
         }
 
         if (!existe)
         {
-
-          lista->palavras_encontradas[lista->qtd_palavras_encontradas].indice = indice;
-          lista->palavras_encontradas[lista->qtd_palavras_encontradas].tam = strlen(words);
+          lista->vetor_auxiliar[indice].encontrado = 1;
           lista->qtd_palavras_encontradas++;
-
           lista->qtd_palavras_por_tamanho[0][(strlen(words) - 4)]++;
 
           printf("sucesso + 1\n");
           if (lista->qtd_palavras_encontradas == lista->tam)
           {
-            printf("parabens! voce encontrou todas as palavras” deve ser mostrada e o programa é encerrado");
+            printf("parabens! voce encontrou todas as palavras\n");
             break;
           }
         }
+        else
+        {
+          printf("palavra ja encontrada\n");
+        }
       }
       else
+      {
         printf("palavra invalida\n");
+      }
     }
+
     if (strcmp(comand, "progresso") == 0)
     {
       printf("progresso atual:\n");
@@ -197,15 +214,10 @@ int main()
     {
       printf("para encerrar o jogo estavam faltando as palavras:\n");
       imprimir_lista(lista);
-      for (int j = 0; j < lista->qtd_palavras_encontradas; j++)
-      {
-        printf(" \nindice[%d] ", lista->palavras_encontradas[j].indice);
-        printf(" \ntam[%d] ", lista->palavras_encontradas[j].tam);
-      }
+
       break;
     }
   }
-
   // lista_destruir();
   return 0;
 }
@@ -214,36 +226,43 @@ void inicio_(char *valid_letters, LISTA *lista)
 {
   char especial_letter = valid_letters[0];
   char word[50];
-  //  Verificando o arquivo
+  int contador_auxiliar = 0;
 
+  // Verifica o arquivo de palavras
   FILE *fp;
   fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
   if (fp == NULL)
   {
-    printf("Erro abrir o arquivo");
+    printf("Erro ao abrir o arquivo");
     exit(1);
   }
 
-  // Processa a palavra do arquivo
+  // Processa cada palavra do arquivo
   while (fscanf(fp, "%s", word) != EOF)
   {
-    // verificar se palavra é válida, se for, insere no array.
-
+    // Verifica se a palavra é válida
     if (verifica_palavra(word, valid_letters, especial_letter))
     {
       inserir_lista(lista, word);
+      lista->vetor_auxiliar[contador_auxiliar].indice = contador_auxiliar;
+      lista->vetor_auxiliar[contador_auxiliar].tam = strlen(word);
+      lista->vetor_auxiliar[contador_auxiliar].encontrado = 0;
+
+      // Atualiza a quantidade de palavras por tamanho
       lista->qtd_palavras_por_tamanho[1][(strlen(word)) - 4]++;
+      contador_auxiliar++;
     }
   }
   fclose(fp);
 }
+
 // Função que verifica se a palavra lida é válida
 int verifica_palavra(char *word, char *valid_letters, char especial_letter)
 {
   size_t i;
   int especial = 0;
   int word_size = strlen(word);
-  if (word_size < 4 || word_size > 7)
+  if (word_size < 4 || word_size > TAM_LETTER)
     return 0;
 
   for (i = 0; i < strlen(word); i++)
@@ -273,34 +292,34 @@ void print_vector(LISTA *lista)
 {
   if (lista != NULL)
   {
-    quick_sort(lista, 0, lista->qtd_palavras_encontradas - 1);
-  }
-  for (int i = 0; i < 5; i++)
-  {
-    int qtd_palavras_restantes = lista->qtd_palavras_por_tamanho[1][i] - lista->qtd_palavras_por_tamanho[0][i];
 
-    printf("(%d letras) %d palavra(s) encontrada(s) / %d palavra(s) faltando\n", i + 4, lista->qtd_palavras_por_tamanho[0][i], qtd_palavras_restantes);
+    for (int i = 0; i < 5; i++)
+    {
+      int qtd_palavras_restantes = lista->qtd_palavras_por_tamanho[1][i] - lista->qtd_palavras_por_tamanho[0][i];
+
+      printf("(%d letras) %d palavra(s) encontrada(s) / %d palavra(s) faltando\n", i + 4, lista->qtd_palavras_por_tamanho[0][i], qtd_palavras_restantes);
+    }
   }
 }
 
 int particiona(LISTA *lista, int beggin, int end)
 {
   int middle = (beggin + end) / 2;
-  int pivo = (lista->palavras_encontradas[beggin].tam + lista->palavras_encontradas[end].tam + lista->palavras_encontradas[middle].tam) / 3; // 1º passo calcula a mediana
+  int pivo = (lista->vetor_auxiliar[beggin].tam + lista->vetor_auxiliar[end].tam + lista->vetor_auxiliar[middle].tam) / 3; // 1º passo calcula a mediana
   while (beggin < end)
   {
     // 2°passo verifica o vetor da esquerda para direita procurando um maior que o pivô
-    while (beggin < end && lista->palavras_encontradas[beggin].tam <= pivo)
+    while (beggin < end && lista->vetor_auxiliar[beggin].tam <= pivo)
       beggin++;
 
     // 3°passo verifica o vetor da direita para esquerda procurando um menor que o pivô
-    while (beggin < end && lista->palavras_encontradas[end].tam > pivo)
+    while (beggin < end && lista->vetor_auxiliar[end].tam > pivo)
       end--;
 
     // 4° passo trocas do i(beggin) com j(end)
-    int aux = lista->palavras_encontradas[beggin].tam;
-    lista->palavras_encontradas[beggin].tam = lista->palavras_encontradas[end].tam;
-    lista->palavras_encontradas[end].tam = aux;
+    int aux = lista->vetor_auxiliar[beggin].tam;
+    lista->vetor_auxiliar[beggin].tam = lista->vetor_auxiliar[end].tam;
+    lista->vetor_auxiliar[end].tam = aux;
   }
   return beggin; // Aqui pode ser tanto o início quanto o fim, pois ambos tem o mesmo índice beggin == end
 }
