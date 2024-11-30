@@ -251,7 +251,7 @@ void inicio_(char *valid_letters, LISTA *lista)
 
   /* Abre o arquivo */
   FILE *fp;
-  fp = fopen("/home/luishenrique/Desktop/Projects/ICC2 - Project 2/valid_words.txt", "r");
+  fp = fopen("/Users/gabri/ICC2-SOLETRA/Soletra-no-Terminal/valid_words.txt", "r");
   if (fp == NULL) // Verificação se o arquivo foi aberto
   {
     printf("Erro ao abrir o arquivo");

@@ -29,7 +29,7 @@ Este projeto implementa uma aplicação interativa no terminal que auxilia os jo
 
 - **Descrição**: Armazena a lista de palavras válidas e informações auxiliares para facilitar operações de busca, ordenação.
 - **Campos**:
-  - `lista_palavras`: Vetor de strings para armazenar palavras válidas.
+  - `lista_palavras`: Vetor de strings para armazenar palavras válidas. 
   - `tam`: Número total de palavras válidas na lista.
   - `inicio` e `fim`: Controlam os limites da lista.
   - `palavras_encontradas`: Vetor auxiliar com as palavras já encontradas.
